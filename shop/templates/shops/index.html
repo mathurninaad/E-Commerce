@@ -1,0 +1,160 @@
+{% extends 'shops/basic.html' %}
+
+{% block css %}
+<style>
+  .card{
+    display: inline-block;
+  }
+  .carousel{
+    margin-top: 100px;
+  }
+  .items{
+    margin: auto;
+    width: 65%;
+    height: 28rem;
+    justify-content: space-evenly;
+  }
+
+  .w-auto{
+    background-color: black;
+    color: white;
+  }
+
+  .typewriter{
+    font-size: 100px;
+    text-align: center;
+  }
+  .card-img-top{
+    height: 50%;
+  }
+
+  @media (max-width: 600px){
+    .typewriter{
+      font-size: 60px;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block body %}
+
+<div class="w-auto d-flex justify-content-center align-items-center t-effect">
+  <p class="typewriter"></p>
+</div>
+
+{% for x in product %}
+  <h1 style='width: 50%; margin: 40px auto 0 auto; text-align: center'>{{x.0}}</h1>
+  <div id="carouselExampleControls{{ forloop.counter }}" class="carousel carousel-dark slide" data-bs-ride="carousel">
+      <div class="carousel-inner">
+        {% for y in x|slice:"1:" %}
+          {% if forloop.counter == 1 %}
+            <div class="carousel-item active">
+              <div class="items d-flex">
+                {% for z in y %}
+                <div class="card" style='width: 18rem;'>
+                  <img src="/media/{{ z.image }}" class="card-img-top" alt="...">
+                  <div class="card-body">
+                    <h5 class="card-title">{{ z.product_name }}</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">Price: &#x20B9; {{ z.price }}</h6>
+                    <p class="card-text">{{ z.short_desc }}</p>
+                    <a href="/shop/products/{{ z.id }}" class="btn btn-outline-dark" >Quick view</a>
+                  </div>
+                </div>
+                {% endfor %}
+              </div>
+            </div>
+          {% else %}
+          <div class="carousel-item">
+            <div class="items d-flex justify-content-evenly">
+              {% for z in y %}
+              <div class="card" style='width: 18rem;'>
+                <img src="/media/{{ z.image }}" class="card-img-top" alt="...">
+                <div class="card-body">
+                  <h5 class="card-title">{{ z.product_name }}</h5>
+                  <h6 class="card-subtitle mb-2 text-muted">Price: {{ z.price }}</h6>
+                  <p class="card-text">{{ z.short_desc }}</p>
+                  <a href="/shop/products/{{ z.id }}" class="btn btn-outline-dark" >Quick view</a>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls{{ forloop.counter }}" data-bs-slide="prev">
+      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls{{ forloop.counter }}" data-bs-slide="next">
+      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Next</span>
+    </button>
+  </div>
+{% endfor %}
+
+
+{% block js %}
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+  <script>
+    let speed = 100;
+    let count = 0;
+    let word = ""
+    let index = 0
+    let notReverse = true
+    let indexReverse = 0
+    let messages = ['Watches', 'Mobile Phones', 'Laptops', 'anything you want']
+
+    function typewriter(){      
+      letters = messages[count]
+      document.querySelector('.typewriter').innerHTML = 'Buy ' + letters.substring(0, index) + '|'
+
+      if (index == letters.length && notReverse){
+        indexReverse = letters.length
+        notReverse = false;
+        if (count == messages.length-1)
+        return;
+      }
+      else if (index != letters.length && notReverse){
+        index++;
+      }
+      else if (!notReverse && index == 0){
+        notReverse = true
+        count++;
+      }
+      else{
+        index--;
+      }
+
+      setTimeout(typewriter, speed)
+      
+    }
+    
+
+    if (localStorage.getItem('cart')==null){
+      var cart = {};
+    }
+    else{
+      var cart = JSON.parse(localStorage.getItem('cart'))
+    }    
+
+    if (sessionStorage.getItem('redirect') == undefined){
+      sessionStorage.setItem('redirect', true)
+      if (window.innerWidth <= 1209 && window.innerWidth >= 924)
+        window.location.href = 2
+      else if (window.innerWidth <= 924)
+        window.location.href = 1
+    }
+
+    window.addEventListener("load", function() {
+        typewriter();
+
+        let typewriterSpace = document.querySelector('.t-effect')
+        console.log(window.getComputedStyle(typewriterSpace).height)
+        typewriterSpace.style.height = window.innerHeight - parseInt(window.getComputedStyle(document.querySelector('.navbar')).height) + "px"
+        console.log(window.getComputedStyle(typewriterSpace).height)
+    })
+  </script>
+{% endblock %}
+
+{% endblock %}

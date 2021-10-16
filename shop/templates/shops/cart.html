@@ -1,0 +1,158 @@
+{% extends 'shops/basic.html' %}
+
+{% block css %}
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+    body{
+        font-family: 'IBM Plex Mono', monospace;
+    }
+    .navbar{
+        font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    }
+    h3{
+        font-weight: 300;
+    }
+    .main-att{
+        padding: 0 10px;
+    }
+    .heading, .real-content, .hr, .checkout{
+        margin: 40px 40px 10px 15px;
+    }
+    .cart-item{
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content:space-between;
+    }
+    .btn-outline-dark{
+        border-radius:0;
+    }
+    .price{
+        letter-spacing: 2px;
+        font-size: 12px;
+        font-weight: 600;
+        margin: 10px 0 3px 0; 
+    }
+    .anchor-remove{
+        letter-spacing: 1px;
+        font-size: 14px;
+        color: rgb(190, 58, 58);
+        text-decoration: none;
+    }
+    .checkout-lead{
+        letter-spacing: 2px;
+    }
+    a:hover{
+       cursor: pointer; 
+    }
+    .checkout{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+</style>
+
+{% endblock %}
+
+{% block body %}
+    <div class="main-att">
+        <div class="next-main-att">
+            <div class="heading">
+                <h3>Your Cart</h3>
+                <p class='main-lead lead'></p>
+                <hr>
+            </div>
+            <div class="real-content">
+            </div>
+            <div class="hr">
+                <hr>
+            </div>
+            <div class="checkout">
+                <div style='display: flex;'>
+                    <p class="lead">Total Price: </p>
+                    <p class="lead checkout-lead" style="margin-left: 10px"></p>
+                </div>
+                <form style='display: inline-block' method='GET' action='/shop/cart'>
+                    <button type='submit' class='btn btn-outline-dark rounded' style="margin-left: 20px">Check-out</button>
+                    <input type="hidden" name='checkout' value='True'>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+
+<script>
+    let products = JSON.parse('{{ products|safe }}')
+    let divStoring = document.querySelector('.real-content')
+    let cart = localStorage.getItem('cart')
+    if (cart == null)
+        console.log('Cart is empty')
+    else{
+        cart = JSON.parse(cart)
+        document.querySelector('.lead').innerText = `There are ${Object.values(cart).reduce((a, b) => a+b, 0)} items in your cart`
+        let keys = Object.keys(cart)
+        let totalPrice = 0
+        for (let i=0; i<keys.length; i++){
+            let tuple = products[keys[i]]
+            let element = document.createElement('div')
+            let underElement = document.createElement('div')
+            let price = document.createElement('p')
+            let button = document.createElement('button')
+            let span = document.createElement('span')
+            let a = document.createElement('a')
+            
+            // setting the href tag
+            a.className = 'anchor-remove'
+            a.innerHTML = 'Remove'
+
+            // setting anchor on-click to remove one from cart
+            a.addEventListener('click', () => {
+                if (cart[keys[i]] <= 1){
+                    delete cart[keys[i]];
+                    location.reload()
+                }
+                else{
+                    button.innerHTML = --cart[keys[i]];
+                    totalPrice-=products[keys[i]][1]
+                    document.querySelector('.checkout-lead').innerHTML = ` &#8377; ${totalPrice}`
+                    document.querySelector('.main-lead').innerHTML = `There are ${Object.values(cart).reduce((a, b) => a+b, 0)} items in your cart`
+                    price.innerHTML = ` &#8377; ${products[keys[i]][1]*cart[keys[i]]}`
+                }
+                localStorage.setItem('cart', JSON.stringify(cart))
+            }) 
+
+            // setting price
+            price.className = 'price'
+            price.innerHTML = `&#8377;  ${products[keys[i]][1]*cart[keys[i]]}`
+            totalPrice+=products[keys[i]][1]*cart[keys[i]]
+
+            // setting span
+            span.innerText = `${tuple[0]}`
+
+            // setting button
+            button.className = 'btn btn-outline-dark'
+            button.innerText = cart[keys[i]]
+            button.disabled = true
+            
+            // setting element class
+            element.className = 'cart-item shadow p-3 mb-5 bg-body rounded'
+
+            // setting underElement's children
+            underElement.appendChild(span)
+            underElement.appendChild(price)
+            underElement.appendChild(a)
+            
+            // setting element's children
+            element.appendChild(underElement)
+            element.appendChild(button)
+
+            // setting mainDiv's children
+            divStoring.appendChild(element)
+        }
+        document.querySelector('.checkout-lead').innerHTML += ` &#8377; ${totalPrice}`
+    }
+</script>
+
+{% endblock %}

@@ -1,0 +1,107 @@
+{% extends 'shops/basic.html' %}
+
+{% block css %}
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+    body{
+        font-family: 'IBM Plex Mono', monospace;
+    }
+    .navbar{
+        font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    }
+    .quarter{
+        display: flex;
+        justify-content: center;
+    }
+    .shadow-lg{
+        margin: 30px;
+        width: 70%;
+    }
+    .show-orders{
+        margin-top:30px;
+    }
+    h2, h3, h4{
+        font-weight: 300;
+    }
+</style>
+
+{% endblock %}
+
+{% block body %}
+
+<div class="quarter">
+    <div class="shadow-lg p-3 mb-5 bg-body rounded">
+        <div class="begin">
+            <h2>Track your order</h2>
+            <hr>
+        </div>
+        <form action="/shop/tracker" method="post" class='row g-3 needs-validation' novalidate>
+            {% csrf_token %}
+            <div class="col-md-6">
+                <label for="validationCustom01" class="form-label">Order ID</label>
+                <input type="text" class="form-control" id="validationCustom01" name='order-id' required>
+                <div class="valid-feedback">
+                  Looks good!
+                </div>
+              </div>
+              <div class="col-md-6">
+                <label for="validationCustom02" class="form-label">e-mail</label>
+                <input type="text" class="form-control" id="validationCustom02" name='e-mail' required>
+                <div class="valid-feedback">
+                  Looks good!
+                </div>                  
+              </div>
+              <div class="col-md-3">
+                  <button class="btn btn-outline-dark" type='submit'>Continue</button>
+              </div>
+            </form>          
+              {% if found and searched %}
+                <div class="show-orders">
+                    <hr>
+                    <h3 style='text-align: center'>Order found</h3>
+                    <div style='padding: 30px'>
+                        <p class="lead">Status: {{ status }}</p>
+                        <h4 style='text-align: center; margin: 30px 0 10px 0'>Order Details</h4>
+                        <p>Expected arrival: {{ arrival }}</p>
+                        <p>Reciever's Name: {{ product.name }}</p>
+                        <p>Reciever's Address: {{ product.address }}</p>
+                        <p>Reciever's city: {{ product.city }}</p>
+                        <p>Total Money paid: &#8377; {{ product.price }}</p>
+                    </div>
+                </div>
+              {% elif not found and searched %}
+                <div class="show-orders">
+                    <hr>
+                    <h3 style='text-align: center'>Order not found</h3>
+                </div>
+              {% endif %}
+    </div>
+</div>
+
+{% endblock %}
+
+{% block js %}
+
+<script>// Example starter JavaScript for disabling form submissions if there are invalid fields
+    (function () {
+      'use strict'
+    
+      // Fetch all the forms we want to apply custom Bootstrap validation styles to
+      var forms = document.querySelectorAll('.needs-validation')
+    
+      // Loop over them and prevent submission
+      Array.prototype.slice.call(forms)
+        .forEach(function (form) {
+          form.addEventListener('submit', function (event) {
+            if (!form.checkValidity()) {
+              event.preventDefault()
+              event.stopPropagation()
+            }
+    
+            form.classList.add('was-validated')
+          }, false)
+        })
+    })()
+</script>
+
+{% endblock %}

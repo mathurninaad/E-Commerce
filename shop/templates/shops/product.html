@@ -1,0 +1,156 @@
+{% extends 'shops/basic.html' %}
+
+{% block title %}My awesome cart:- {{ product.product_name }} {% endblock %}
+
+
+{% block css %}
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+    img{
+        height: auto;
+    }
+    h2{
+        font-family: 'IBM Plex Mono', monospace;
+        margin-top: 20px;
+        font-weight: 400;
+    }
+    h4{
+        font-family: 'IBM Plex Mono', monospace;
+        font-weight: 300;
+        margin-top: 20px;
+        letter-spacing: 3px;
+    }
+    .free-shipping{
+        margin-top: 60px;
+        height: 40px;
+        width: 120px;
+        background: rgb(255, 92, 95);
+    }
+    .free-shipping div{
+        color: white;
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 13px;
+        font-weight: 500;
+        text-align: center;
+        text-transform: uppercase;
+    }
+    .paragraph{
+        letter-spacing: 1.5px;
+        margin-top: 50px;
+    }
+
+    .btn-outline-dark, .btn-dark {
+        margin-top: 30px;
+        border-radius: 0;
+        padding: 10px;
+        width: 46px;
+    }
+    .btn-dark{
+        margin-left: 20px;
+    }
+    .btn-dark:hover{
+        background: white;
+        color: black;
+    }
+    .share{
+        margin-top: 50px;
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 15px;
+    }
+    .w-auto{
+        padding: 40px;
+    }
+    .col-lg-5{
+        margin-bottom: 20px;
+    }
+    .icons{
+        width: 200px;
+    }
+</style>
+
+{% endblock %}
+
+{% block body %}
+<div>
+    <div class="row w-auto flex-column-reverse flex-lg-row" style='margin: 10px 0'>
+        <div class="col-lg-5 check">
+            <h2>{{ product.product_name }}</h2>
+            <h4>&#8377;  {{ product.price }}.00 Rupees</h4>
+            <div class="free-shipping d-flex justify-content-evenly align-items-center">
+                <div>Free shipping</div>
+            </div>
+            <p class="paragraph">{{ product.long_desc }}</p>
+            <div class='all-buttons'>
+                <button class="btn btn-outline-dark">+</button>
+                <button class="btn btn-outline-dark" disabled>0</button>
+                <button class="btn btn-outline-dark">-</button>
+                <form action="/shop/cart/{{ product.id }}" method="get" style='display: inline-block'>
+                    <button class="btn btn-dark" style='width: 100px'>Buy now</button>
+                </form>
+            </div>
+            <p class="share">Share</p>
+            <div>
+                <div class="row icons">
+                    <div class="col-3">
+                        <img src="/media/shop/images/mail.png" alt="mail">
+                    </div>
+                    <div class="col-3">
+                        <img src="/media/shop/images/telegram.png" alt="telegram">
+                    </div>
+                    <div class="col-3">
+                        <img src="/media/shop/images/whatsapp.png" alt="whatsapp">
+                    </div>
+                    <div class="col-3">
+                        <img src="/media/shop/images/instagram.png" alt="instagram">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 check d-flex justify-content-evenly shadow-lg p-3 mb-5 bg-body rounded col-md-12">
+            <img src="/media/{{ product.image }}" alt="">
+        </div>
+    </div>
+</div>
+
+
+{% block js %}
+
+<script>
+    let [plus, quantity, minus] = document.querySelector('.all-buttons').children
+    let cart = null
+    
+    plus.addEventListener('click', () => {
+        quantity.innerText++;
+        if (cart['{{ product.id }}'] == undefined)
+            cart['{{ product.id }}'] = 0
+        cart['{{ product.id }}']++;
+        localStorage.setItem('cart', JSON.stringify(cart))
+        document.querySelector('.cart-n').innerHTML = `Cart (${Object.values(cart).reduce((a,b) => a+b, 0 )})`
+    })
+
+    minus.addEventListener('click', () => {
+        if (quantity.innerText != 0){
+            quantity.innerText--;
+            if (cart['{{ product.id }}'] == undefined)
+                cart['{{ product.id }}'] = 0
+            cart['{{ product.id }}']--;
+            document.querySelector('.cart-n').innerHTML = `Cart (${Object.values(cart).reduce((a,b) => a+b, 0 )})`
+        }
+        localStorage.setItem('cart', JSON.stringify(cart))
+        
+    })
+
+    if (localStorage.getItem('cart') == null){
+        cart = {}
+        localStorage.setItem('cart', '{}')
+    }
+    else{
+        cart = JSON.parse(localStorage.getItem('cart')) 
+    }
+</script>
+
+{% endblock %}
+
+{% endblock %}
+
+    
