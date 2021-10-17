@@ -1,5 +1,7 @@
+from django.core.checks import messages
 from django.http.response import HttpResponse
 from django.shortcuts import render
+from django.contrib.auth.models import User
 import datetime
 import json
 from functools import reduce
@@ -114,3 +116,24 @@ def cart(request, id=None):
         products[i.id] = [i.product_name, i.price]
     products = json.dumps(products)
     return render(request, 'shops/cart.html', {"products": products})
+
+
+def sign_up(request):
+    if (request.method == 'POST'):
+        email = request.POST.get('e-mail')
+        password = request.POST.get('password')
+        username = request.POST.get('username')
+        print(username, password, email)
+
+        # creating the user
+
+        user = User.objects.create_user(username, email, password)
+        user.save()
+
+        print(user)
+
+        return HttpResponse('')
+    return render(request, 'shops/signUp.html')
+
+def log_in(request):
+    return render(request, 'shops/log-in.html')

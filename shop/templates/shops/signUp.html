@@ -1,0 +1,99 @@
+{% extends 'shops/basic.html' %}
+
+{% block css %}
+
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+    body{
+        font-family: 'IBM Plex Mono', monospace;
+    }
+    .navbar{
+        font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    }
+    .screen{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+    }
+    .shadow-lg{
+        width: 70%;
+        margin-top: 30px;
+    }
+    h2{
+        font-weight: 400;
+    }
+    .apply-margin{
+        margin: 40px;
+    }
+</style>
+
+{% endblock %}
+
+{% block body %}
+    <div class="screen">
+        <div class="shadow-lg main-shadow p-3 mb-5 bg-body rounded">
+            <div class="apply-margin">
+                <h2>Sign Up</h2>
+                <p class="lead">Please fill the details given below</p>
+                <hr>
+                <form class="row g-3 needs-validation" novalidate method='POST' action='/shop/sign-up'>
+                    {% csrf_token %}
+                    <div class="col-md-3">
+                        <label for="validationCustom02" class="form-label">username</label>
+                        <input type="text" class="form-control" id="validationCustom02" name='username' required>
+                      </div>
+                    <div class="col-md-3">
+                      <label for="validationCustom01" class="form-label">E-mail</label>
+                      <input type="email" class="form-control" id="validationCustom01" name='e-mail' required>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="validationCustom03" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="validationCustom03" name='password' required>
+                      </div>
+                    <div class="col-12">
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="on" id="invalidCheck" required>
+                        <label class="form-check-label" for="invalidCheck" name='check'>
+                          Agree to terms and conditions
+                        </label>
+                      </div>
+                    </div>
+                    <div class="col-12">
+                      <button class="btn btn-primary" type="submit">Submit form</button>
+                    </div>
+                  </form>
+            </div>
+            
+        </div>
+    </div>
+
+
+
+{% endblock %}
+
+
+{% block js %}
+<script>// Example starter JavaScript for disabling form submissions if there are invalid fields
+    (function () {
+      'use strict'
+    
+      // Fetch all the forms we want to apply custom Bootstrap validation styles to
+      var forms = document.querySelectorAll('.needs-validation')
+    
+      // Loop over them and prevent submission
+      Array.prototype.slice.call(forms)
+        .forEach(function (form) {
+          form.addEventListener('submit', function (event) {
+            if (!form.checkValidity()) {
+              event.preventDefault()
+              event.stopPropagation()
+            }
+    
+            form.classList.add('was-validated')
+          }, false)
+        })
+    })()
+</script>
+{% endblock %}
