@@ -32,14 +32,19 @@
             <li class="nav-item">
               <a href="/shop/cart" class="nav-link cart-n">Cart</a>
             </li>
-            <li class="nav-item">
-              <a href="/shop/sign-up" class="nav-link">Sign up</a>
-            </li>
-            <li class="nav-item">
-              <a href="/shop/log-in" class="nav-link">Log in</a>
-            </li>
-          </ul>
-
+            {% if user.is_authenticated %}
+              <li class="nav-item">
+                <a href="/shop/log-out" class="nav-link">Log out</a>
+              </li>
+            {% else %}
+              <li class="nav-item">
+                <a href="/shop/sign-up" class="nav-link">Sign up</a>
+              </li>
+              <li class="nav-item">
+                <a href="/shop/log-in" class="nav-link">Log in</a>
+              </li>
+              {% endif %}
+            </ul>
           <form class="d-flex">
             <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
             <button class="btn btn-outline-success" type="submit">Search</button>

@@ -1,6 +1,6 @@
-from django.core.checks import messages
 from django.http.response import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import redirect, render
+from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.models import User
 import datetime
 import json
@@ -13,7 +13,6 @@ def index(request, t=3):
     products = models.Product.objects.all()
     final_products = []
     total_cards = t
-    print(products)
     product_on_categories =  {"All": []}
     for i in products:
         product_on_categories['All'].append(i)
@@ -24,7 +23,6 @@ def index(request, t=3):
         product_on_categories[i.category].append(i)
         product_on_categories[i.sub_category].append(i) 
     for x in product_on_categories:
-        print(product_on_categories[x])
         finals = []
         no_slides = len(product_on_categories[x]) // total_cards + ceil((len(product_on_categories[x]) / total_cards) - (len(product_on_categories[x]) // total_cards))
         for i in range(no_slides):
@@ -37,15 +35,14 @@ def index(request, t=3):
             finals.append(temp)
         finals.insert(0, x)
         final_products.append(finals)
-    print(final_products)
-    for i in final_products:
-        print(i)
     return render(request, 'shops/index.html', {"start_product": [products[0], products[1], products[2]], "product": final_products})
 
 
 def contact(request):
     if (request.method == 'POST'):
         message, name, e_mail = request.POST.get('message', ''), request.POST.get('name', ''), request.POST.get('e-mail', '')
+        if (message == '' or name == '' or e_mail == ''):
+            return render(request, 'shops/contact.html', {'missing': True})
         print(message, name, e_mail, sep='\t')
         contact = models.Contact(message=message, name=name, e_mail=e_mail)
         contact.save()
@@ -94,7 +91,10 @@ def cart(request, id=None):
             listItems = {id: {"price": product[0].price, 'qty': 1, 'name': product[0].product_name}, 'date': datetime.datetime.today().strftime('%d %b %m %Y')}
             order = models.Order(array=listItems, price=product[0].price, name=name, state=state, city=city, address=address, zip=zip_, e_mail=e_mail)
             order.save()
-            return HttpResponse(f'Thank you for purchasing at "My Awesome Cart". Your order id is: {order.order_id}')
+            return HttpResponse(f'''Thank you for purchasing at "My Awesome Cart". Your order id is: {order.order_id}
+            <form action='/shop' method='GET'>
+                <button>Go Back</button>
+            </form>''')
         elif (type(items) == dict and e_mail != '' and zip_ != '' and items != '' and terms != '' and name != '' and state != '' and city != '' and address != ''):
             price = 0
             listItems = {}
@@ -105,7 +105,10 @@ def cart(request, id=None):
             listItems['date'] = datetime.datetime.today().strftime('%d %b %m %Y')
             order = models.Order(array=listItems, price=price, name=name, state=state, city=city, address=address, zip=zip_, e_mail=e_mail)
             order.save()
-            return HttpResponse(f'Thank you for purchasing at "My Awesome Cart". Your order id is: {order.order_id}')
+            return HttpResponse(f'''Thank you for purchasing at "My Awesome Cart". Your order id is: {order.order_id}
+            <form action='/shop' method='GET'>
+                <button>Go Back</button>
+            </form>''')
         else:
             return HttpResponse("An error Occurred while processing your request")
     if (request.method == 'GET' and request.GET.get('checkout', 'False') != 'False'):
@@ -130,10 +133,32 @@ def sign_up(request):
         user = User.objects.create_user(username, email, password)
         user.save()
 
-        print(user)
+        login(request, user)
 
-        return HttpResponse('')
+        return redirect('/shop')
     return render(request, 'shops/signUp.html')
 
 def log_in(request):
+    if (request.method == 'POST'):
+        email = request.POST.get('e-mail')
+        password = request.POST.get('password')
+        user = None
+        try:
+            user:User = User.objects.get(email=email)
+        except:
+            pass
+        if (user is not None):
+            user = user if user.check_password(password) else None
+
+        if (user is not None):
+            login(request, user)
+            print('User logged in')
+            return redirect('/shop')
+
+        return HttpResponse('Error')
     return render(request, 'shops/log-in.html')
+
+def log_out(request):
+    logout(request)
+    print('Logged out user')
+    return redirect('/shop')

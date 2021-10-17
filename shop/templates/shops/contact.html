@@ -67,8 +67,13 @@
 
 {% block body %}
 
-<div class="row align-items-center justify-content-evenly">
+<div class="row align-items-center justify-content-evenly" style='margin-top: 20px'>
     <div class="shadow-lg p-3 mb-5 bg-body rounded col-5">
+        {% if missing %}
+        <div class="alert alert-danger" role="alert">
+            Please fill in the required details correctly
+        </div>
+        {% endif %}
         <div class="cont">
             <h3>Contact us</h3>
             <p class="lead">Please fill the given form in a decent manner</p>
