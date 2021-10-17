@@ -1,10 +1,9 @@
 from django.http.response import HttpResponse
 from django.shortcuts import redirect, render
-from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth import login, logout
 from django.contrib.auth.models import User
 import datetime
 import json
-from functools import reduce
 from math import ceil
 from . import models
 
@@ -50,10 +49,12 @@ def contact(request):
 
 def tracker(request):
     if (request.method == 'GET'):
+        if (not request.user.is_authenticated):
+            return redirect('/shop/sign-up')
         return render(request, 'shops/tracker.html', {'found': False, 'searched': False})
     elif (request.method == 'POST'):
         id = request.POST.get('order-id', '')
-        email = request.POST.get('e-mail', '')
+        email = request.user.email
         findId = models.Order.objects.filter(order_id=id)
         if (len(findId) == 0):
             return render(request, 'shops/tracker.html', {'found': False, 'searched': True})
@@ -76,6 +77,8 @@ def productview(request, id):
 
 def cart(request, id=None):
     if (id != None and request.method == 'GET' and len(models.Product.objects.filter(id=id)) != 0):
+        if (not request.user.is_authenticated):
+            return redirect('/shop/sign-up')
         return render(request, 'shops/checkout.html', {'given_id': id})
     if (request.method == 'POST'):
         items = eval(request.POST.get('inputJSON', ''))
@@ -112,6 +115,8 @@ def cart(request, id=None):
         else:
             return HttpResponse("An error Occurred while processing your request")
     if (request.method == 'GET' and request.GET.get('checkout', 'False') != 'False'):
+        if (not request.user.is_authenticated):
+            return redirect('/shop/sign-up')
         return render(request,'shops/checkout.html')
                 
     products = {}
@@ -162,3 +167,11 @@ def log_out(request):
     logout(request)
     print('Logged out user')
     return redirect('/shop')
+
+def my_account(request):
+    if (request.user.is_authenticated):
+        all_items = models.Order.objects.filter(e_mail=request.user.email)
+        total_price = 0
+        for i in all_items:
+            total_price += i.price
+        return render(request, 'shops/my_account.html', {"total_orders": len(all_items), "total_price": total_price, "awesome_points": (total_price // len(all_items)) if len(all_items) != 0 else 0, "awesome_cash_value": ((total_price // len(all_items)) // 2) if len(all_items) != 0 else 0})

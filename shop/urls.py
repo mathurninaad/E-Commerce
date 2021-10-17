@@ -28,5 +28,6 @@ urlpatterns = [
     path('cart/<int:id>', views.cart, name='Cart'),
     path('sign-up', views.sign_up, name='Sign up'),
     path('log-in', views.log_in, name='Log in'),
-    path('log-out', views.log_out, name='Log out')
+    path('log-out', views.log_out, name='Log out'),
+    path('my-account', views.my_account, name='Manage my account')
 ]

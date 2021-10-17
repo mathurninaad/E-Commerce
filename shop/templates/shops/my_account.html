@@ -1,0 +1,64 @@
+{% extends 'shops/basic.html' %}
+
+{% block css %}
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+    body{
+        font-family: 'IBM Plex Mono', monospace;
+    }
+    .navbar{
+        font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    }
+    .main-div{
+        display: flex;
+        justify-content: center;
+    }
+    .shadow-lg{
+        margin-top: 40px;
+        width: 60%;
+    }
+    h2, h5{
+        font-weight: 400;
+    }
+    h5{
+        margin: 20px 0;
+    }
+    .heading{
+        margin: 30px;
+    }
+    .btn-outline-dark{
+        margin-top: 30px;
+    }
+    @media (max-width: 643px){
+        .shadow-lg{
+            width: 100%;
+            height: 100vh;
+            margin-top: 0;
+        }
+    }
+</style>
+
+{% endblock %}
+
+
+{% block body %}
+<div class="main-div">
+    <div class="shadow-lg p-3 mb-5 bg-body rounded">
+        <div class="heading">
+            <h2>Hello, {{ user.username }}</h2>
+            <p class="lead">Welcome to your account</p>
+            <hr>
+            <h5>Name: </h5>
+            <h5>E-mail: {{ user.email }}</h5>
+            <h5>Mobile Number:</h5>
+            <h5>Total Orders: {{ total_orders }}</h5>
+            <h5>Total Money paid: {{ total_price }}</h5>
+            <h5>Total Awesome points: {{ awesome_points }} i.e. &#8377; {{ awesome_cash_value }}</h5>
+            <a href="/shop/my-items" class='btn btn-outline-dark'>View my items</a>
+            <a href="/shop/edit" class="btn btn-outline-dark">Edit profile</a>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

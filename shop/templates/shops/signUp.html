@@ -38,20 +38,31 @@
                 <h2>Sign Up</h2>
                 <p class="lead">Please fill the details given below</p>
                 <hr>
-                <form class="row g-3 needs-validation" novalidate method='POST' action='/shop/sign-up'>
+                <form class="row g-3 needs-validation" novalidate method='POST' action='/shop/sign-up' style='margin-bottom:30px'>
                     {% csrf_token %}
-                    <div class="col-md-3">
+                    <div class="col-md-6">
                         <label for="validationCustom02" class="form-label">username</label>
                         <input type="text" class="form-control" id="validationCustom02" name='username' required>
                       </div>
-                    <div class="col-md-3">
+                    <div class="col-md-6">
                       <label for="validationCustom01" class="form-label">E-mail</label>
                       <input type="email" class="form-control" id="validationCustom01" name='e-mail' required>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-6">
                         <label for="validationCustom03" class="form-label">Password</label>
                         <input type="password" class="form-control" id="validationCustom03" name='password' required>
+                    </div>
+                    <div class="col-md-6">
+                      <label for="validationCustom04" class="form-label">Age</label>
+                      <input type="number" class="form-control" id="validationCustom04" name='age' required min="13">
+                      <div class="invalid-feedback">
+                        Age must be equal to or above 13
                       </div>
+                    </div>  
+                    <div class="col-md-6">
+                      <label for="validationCustom05" class="form-label">Mobile Number (exclude 0 or +91)</label>
+                      <input type="tel" class="form-control" id="validationCustom05" name='mobile' required>
+                    </div>  
                     <div class="col-12">
                       <div class="form-check">
                         <input class="form-check-input" type="checkbox" value="on" id="invalidCheck" required>
@@ -61,16 +72,14 @@
                       </div>
                     </div>
                     <div class="col-12">
-                      <button class="btn btn-primary" type="submit">Submit form</button>
+                      <button class="btn btn-outline-dark" type="submit">Sign up</button>
                     </div>
                   </form>
+                  <a href="/shop/log-in" style="text-decoration: none; color:rgb(37, 35, 150);">Already Have an account?</a>
             </div>
             
         </div>
     </div>
-
-
-
 {% endblock %}
 
 
