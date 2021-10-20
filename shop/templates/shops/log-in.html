@@ -38,7 +38,7 @@
                 <h2>Log in</h2>
                 <p class="lead">Please log in to continue</p>
                 <hr>
-                <form class="row g-3 needs-validation" novalidate method='POST' action='/shop/log-in'>
+                <form class="row g-3 needs-validation" novalidate method='POST' action='/shop/log-in' style='margin-bottom: 30px'>
                     {% csrf_token %}
                     <div class="col-md-4">
                       <label for="validationCustom01" class="form-label">Username</label>
@@ -52,6 +52,7 @@
                       <button class="btn btn-outline-dark" type="submit">Log in</button>
                     </div>
                   </form>
+                <a href="/shop/sign-up" style="text-decoration: none; color:rgb(37, 35, 150)">Don't have an account?</a>
             </div>
             
         </div>

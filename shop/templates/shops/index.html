@@ -1,13 +1,8 @@
 {% extends 'shops/basic.html' %}
 
 {% block css %}
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-  .card{
-    display: inline-block;
-  }
-  .carousel{
-    margin-top: 100px;
-  }
   .items{
     margin: auto;
     width: 65%;
@@ -24,10 +19,39 @@
     font-size: 100px;
     text-align: center;
   }
-  .card-img-top{
-    height: 50%;
+  .product-h1, .apply-font{
+    font-family: 'IBM Plex Mono', monospace;
   }
 
+  .product-h1{
+    font-weight: 400;
+    letter-spacing: 2px;
+  }
+
+  hr{
+    border-top: 10px dotted black;
+  }
+
+  .product{
+    position: relative;
+    transform: translateY(150px);
+    opacity: 0;
+    transition: all 2s ease;
+    text-align: center;
+
+  }
+
+  .product.active{
+    transform: translateY(0px);
+    opacity: 1;
+  }
+
+  .product:hover{
+    transform: rotate3d(100, 100,100, 5deg);
+    transition: 1s ease;
+    border-radius: 100px;
+    box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.479)
+  }
   @media (max-width: 600px){
     .typewriter{
       font-size: 60px;
@@ -41,57 +65,23 @@
 <div class="w-auto d-flex justify-content-center align-items-center t-effect">
   <p class="typewriter"></p>
 </div>
-
-{% for x in product %}
-  <h1 style='width: 50%; margin: 40px auto 0 auto; text-align: center'>{{x.0}}</h1>
-  <div id="carouselExampleControls{{ forloop.counter }}" class="carousel carousel-dark slide" data-bs-ride="carousel">
-      <div class="carousel-inner">
-        {% for y in x|slice:"1:" %}
-          {% if forloop.counter == 1 %}
-            <div class="carousel-item active">
-              <div class="items d-flex">
-                {% for z in y %}
-                <div class="card" style='width: 18rem;'>
-                  <img src="/media/{{ z.image }}" class="card-img-top" alt="...">
-                  <div class="card-body">
-                    <h5 class="card-title">{{ z.product_name }}</h5>
-                    <h6 class="card-subtitle mb-2 text-muted">Price: &#x20B9; {{ z.price }}</h6>
-                    <p class="card-text">{{ z.short_desc }}</p>
-                    <a href="/shop/products/{{ z.id }}" class="btn btn-outline-dark" >Quick view</a>
-                  </div>
-                </div>
-                {% endfor %}
-              </div>
-            </div>
-          {% else %}
-          <div class="carousel-item">
-            <div class="items d-flex justify-content-evenly">
-              {% for z in y %}
-              <div class="card" style='width: 18rem;'>
-                <img src="/media/{{ z.image }}" class="card-img-top" alt="...">
-                <div class="card-body">
-                  <h5 class="card-title">{{ z.product_name }}</h5>
-                  <h6 class="card-subtitle mb-2 text-muted">Price: {{ z.price }}</h6>
-                  <p class="card-text">{{ z.short_desc }}</p>
-                  <a href="/shop/products/{{ z.id }}" class="btn btn-outline-dark" >Quick view</a>
-                </div>
-              </div>
-              {% endfor %}
-            </div>
-          </div>
-          {% endif %}
-        {% endfor %}
-      </div>
-    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls{{ forloop.counter }}" data-bs-slide="prev">
-      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-      <span class="visually-hidden">Previous</span>
-    </button>
-    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls{{ forloop.counter }}" data-bs-slide="next">
-      <span class="carousel-control-next-icon" aria-hidden="true"></span>
-      <span class="visually-hidden">Next</span>
-    </button>
+<div class="row" style='margin: 0;'>
+  {% for i in product %}
+  
+  <div class="col-lg-6 col-sm-12 product make-3d" style='padding: 20px; background-color: {{ i.colour }}' id='div{{ forloop.counter }}''>
+    <h1 class="product-h1">{{ i.product_name }}</h1>
+    <p class="lead apply-font">{{ i.short_desc }}</p>
+    <hr style='background-color: {{ i.colour }}'>
+    <p class="apply-font lead">Price: &#8377; {{ i.price }}</p>
+    <p class="apply-font lead">Category: {{ i.category }}</p>
+    <p class="apply-font" style='padding: 30px;'>{{ i.long_desc }}</p>
+    <a class="btn btn-outline-dark" href='/shop/products/{{ i.id }}'>
+      Quick View
+    </a>
   </div>
-{% endfor %}
+  
+  {% endfor %}
+</div>
 
 
 {% block js %}
@@ -138,14 +128,6 @@
       var cart = JSON.parse(localStorage.getItem('cart'))
     }    
 
-    if (sessionStorage.getItem('redirect') == undefined){
-      sessionStorage.setItem('redirect', true)
-      if (window.innerWidth <= 1209 && window.innerWidth >= 924)
-        window.location.href = 2
-      else if (window.innerWidth <= 924)
-        window.location.href = 1
-    }
-
     window.addEventListener("load", function() {
         typewriter();
 
@@ -154,6 +136,22 @@
         typewriterSpace.style.height = window.innerHeight - parseInt(window.getComputedStyle(document.querySelector('.navbar')).height) + "px"
         console.log(window.getComputedStyle(typewriterSpace).height)
     })
+
+    let products = document.querySelectorAll('.product')
+
+    window.addEventListener('scroll', reveal)
+    function reveal(){
+      for (let i=0; i<products.length; i++){
+        let totalTime = 50;
+
+        if (i%2!=0){
+          totalTime = 100;
+        }
+        if (totalTime < window.innerHeight - products[i].getBoundingClientRect().top){
+          products[i].classList.add('active')
+        }
+      }
+    }
   </script>
 {% endblock %}
 

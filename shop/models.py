@@ -13,6 +13,7 @@ class Product(models.Model):
     sub_category = models.CharField(max_length=50, default='')
     price = models.IntegerField(default=0)
     image = models.ImageField(upload_to="shop/images", default="")
+    colour = models.CharField(max_length=20, default='')
 
     def __str__(self):
         return self.product_name

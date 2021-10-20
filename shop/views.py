@@ -10,8 +10,6 @@ from . import models
 # Create your views here.
 def index(request, t=3):
     products = models.Product.objects.all()
-    final_products = []
-    total_cards = t
     product_on_categories =  {"All": []}
     for i in products:
         product_on_categories['All'].append(i)
@@ -21,20 +19,7 @@ def index(request, t=3):
             product_on_categories[i.sub_category] = []
         product_on_categories[i.category].append(i)
         product_on_categories[i.sub_category].append(i) 
-    for x in product_on_categories:
-        finals = []
-        no_slides = len(product_on_categories[x]) // total_cards + ceil((len(product_on_categories[x]) / total_cards) - (len(product_on_categories[x]) // total_cards))
-        for i in range(no_slides):
-            temp = []
-            try:
-                for z in range(total_cards):
-                    temp.append(product_on_categories[x][i*total_cards+z])
-            except IndexError:
-                pass
-            finals.append(temp)
-        finals.insert(0, x)
-        final_products.append(finals)
-    return render(request, 'shops/index.html', {"start_product": [products[0], products[1], products[2]], "product": final_products})
+    return render(request, 'shops/index.html', {"product": products})
 
 
 def contact(request):
@@ -83,22 +68,21 @@ def cart(request, id=None):
     if (request.method == 'POST'):
         items = eval(request.POST.get('inputJSON', ''))
         terms = request.POST.get('terms', '')
-        name = request.POST.get('name', '')
         state = request.POST.get('state', '')
         city = request.POST.get('city', '')
         address = request.POST.get('address', '')
         zip_ = request.POST.get('zip', '')
-        e_mail = request.POST.get('e-mail', '')
-        if (id != None and e_mail != '' and zip_ != '' and items != '' and terms != '' and name != '' and state != '' and city != '' and address != ''):
+        print(request.user.username, request.user.email)
+        if (id != None and zip_ != '' and items != '' and terms != '' and state != '' and city != '' and address != ''):
             product = models.Product.objects.filter(id=id)
             listItems = {id: {"price": product[0].price, 'qty': 1, 'name': product[0].product_name}, 'date': datetime.datetime.today().strftime('%d %b %m %Y')}
-            order = models.Order(array=listItems, price=product[0].price, name=name, state=state, city=city, address=address, zip=zip_, e_mail=e_mail)
+            order = models.Order(array=listItems, price=product[0].price, name=request.user.username, state=state, city=city, address=address, zip=zip_, e_mail=request.user.email)
             order.save()
             return HttpResponse(f'''Thank you for purchasing at "My Awesome Cart". Your order id is: {order.order_id}
             <form action='/shop' method='GET'>
                 <button>Go Back</button>
             </form>''')
-        elif (type(items) == dict and e_mail != '' and zip_ != '' and items != '' and terms != '' and name != '' and state != '' and city != '' and address != ''):
+        elif (type(items) == dict and zip_ != '' and items != '' and terms != '' and state != '' and city != '' and address != ''):
             price = 0
             listItems = {}
             for i in items:
@@ -106,7 +90,7 @@ def cart(request, id=None):
                 price += currItem.price * items[i]
                 listItems[i] = {"price": currItem.price, "qty": items[i], "name": currItem.product_name}
             listItems['date'] = datetime.datetime.today().strftime('%d %b %m %Y')
-            order = models.Order(array=listItems, price=price, name=name, state=state, city=city, address=address, zip=zip_, e_mail=e_mail)
+            order = models.Order(array=listItems, price=price, name=request.user.username, state=state, city=city, address=address, zip=zip_, e_mail=request.user.email)
             order.save()
             return HttpResponse(f'''Thank you for purchasing at "My Awesome Cart". Your order id is: {order.order_id}
             <form action='/shop' method='GET'>
