@@ -115,16 +115,28 @@ def sign_up(request):
         email = request.POST.get('e-mail')
         password = request.POST.get('password')
         username = request.POST.get('username')
-        print(username, password, email)
+        age = request.POST.get('age')
+        mobile = request.POST.get('mobile')
 
-        # creating the user
+        if (email != None and password != None and username != None and age != None and mobile != None and len(User.objects.filter(email=email)) == 0 and age.isnumeric() and int(age) >= 13 and mobile.isnumeric() and len(mobile) == 10 and len(User.objects.filter(username=username)) == 0):
+            print(age, mobile)
+            print(username, password, email)
 
-        user = User.objects.create_user(username, email, password)
-        user.save()
+            # creating the user
 
-        login(request, user)
+            user = User.objects.create_user(username, email, password)
+            user.save()
 
-        return redirect('/shop')
+            person = models.OtherUserDetails(email=email, age=int(age), mobile=mobile)
+            person.save()
+
+            login(request, user)
+
+            return redirect('/shop')
+
+        else:
+            return render(request, 'shops/signUp.html', {"invalid": True})
+
     return render(request, 'shops/signUp.html')
 
 def log_in(request):

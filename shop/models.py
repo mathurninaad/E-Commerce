@@ -41,3 +41,8 @@ class Order(models.Model):
 
     def __str__(self):
         return self.e_mail
+
+class OtherUserDetails(models.Model):
+    email = models.CharField(primary_key=True, unique=True, max_length=60)
+    mobile = models.CharField(max_length=11)
+    age = models.IntegerField(default=13)

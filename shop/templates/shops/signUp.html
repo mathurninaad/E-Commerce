@@ -35,6 +35,11 @@
     <div class="screen">
         <div class="shadow-lg main-shadow p-3 mb-5 bg-body rounded">
             <div class="apply-margin">
+                {% if invalid %}
+                <div class="alert alert-danger" role="alert">
+                  Invalid details provided
+                </div>
+                {% endif %}
                 <h2>Sign Up</h2>
                 <p class="lead">Please fill the details given below</p>
                 <hr>
