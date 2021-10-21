@@ -2,7 +2,7 @@
 
 this is an e-commerce website that I have created to refresh my knowledge of HTML, CSS and JS and to learn Python Framework 'Django'
 
- ##### It supports the following features
+##### It supports the following features
 1. Adding items to cart
 2. Viewing the items
 	* Changing their quantity
