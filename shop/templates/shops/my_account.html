@@ -49,9 +49,9 @@
             <h2>Hello, {{ user.username }}</h2>
             <p class="lead">Welcome to your account</p>
             <hr>
-            <h5>Name: </h5>
+            <h5>Username: {{ user.username }}</h5>
             <h5>E-mail: {{ user.email }}</h5>
-            <h5>Mobile Number:</h5>
+            <h5>Mobile Number: +91 {{ remaining_details.mobile }}</h5>
             <h5>Total Orders: {{ total_orders }}</h5>
             <h5>Total Money paid: {{ total_price }}</h5>
             <h5>Total Awesome points: {{ awesome_points }} i.e. &#8377; {{ awesome_cash_value }}</h5>

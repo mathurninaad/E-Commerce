@@ -167,7 +167,9 @@ def log_out(request):
 def my_account(request):
     if (request.user.is_authenticated):
         all_items = models.Order.objects.filter(e_mail=request.user.email)
+        remaining_details = models.OtherUserDetails.objects.filter(email=request.user.email)
         total_price = 0
         for i in all_items:
             total_price += i.price
-        return render(request, 'shops/my_account.html', {"total_orders": len(all_items), "total_price": total_price, "awesome_points": (total_price // len(all_items)) if len(all_items) != 0 else 0, "awesome_cash_value": ((total_price // len(all_items)) // 2) if len(all_items) != 0 else 0})
+        return render(request, 'shops/my_account.html', {"remaining_details": remaining_details[0], "total_orders": len(all_items), "total_price": total_price, "awesome_points": (total_price // len(all_items)) if len(all_items) != 0 else 0, "awesome_cash_value": ((total_price // len(all_items)) // 2) if len(all_items) != 0 else 0})
+    return redirect('/shop/')
