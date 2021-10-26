@@ -124,10 +124,10 @@ def sign_up(request):
 
             # creating the user
 
-            user = User.objects.create_user(username, email, password)
+            user = User.objects.create_user(username, email.lower(), password)
             user.save()
 
-            person = models.OtherUserDetails(email=email, age=int(age), mobile=mobile)
+            person = models.OtherUserDetails(email=email.lower(), age=int(age), mobile=mobile)
             person.save()
 
             login(request, user)
