@@ -145,7 +145,7 @@ def log_in(request):
         password = request.POST.get('password')
         user = None
         try:
-            user:User = User.objects.get(email=email)
+            user:User = User.objects.get(email=email.lower())
         except:
             pass
         if (user is not None):
@@ -173,3 +173,11 @@ def my_account(request):
             total_price += i.price
         return render(request, 'shops/my_account.html', {"remaining_details": remaining_details[0], "total_orders": len(all_items), "total_price": total_price, "awesome_points": (total_price // len(all_items)) if len(all_items) != 0 else 0, "awesome_cash_value": ((total_price // len(all_items)) // 2) if len(all_items) != 0 else 0})
     return redirect('/shop/')
+
+def my_items(request):
+    if (request.user.is_authenticated):
+        orders_by_user = models.Order.objects.filter(e_mail=request.user.email)
+        orders_by_user = [[i.array[x] for x in i.array] for i in orders_by_user]
+        print(orders_by_user)
+        return render(request, 'shops/my_items.html', {"orders": orders_by_user, "length_orders": len(orders_by_user) })
+    return HttpResponse('404 Page not found error')
