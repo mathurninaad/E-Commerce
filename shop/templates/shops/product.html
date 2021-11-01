@@ -143,6 +143,8 @@
     }
     else{
         cart = JSON.parse(localStorage.getItem('cart')) 
+        if (cart['{{ product.id }}'] != undefined)
+            quantity.innerText = cart['{{ product.id }}']
     }
 </script>
 

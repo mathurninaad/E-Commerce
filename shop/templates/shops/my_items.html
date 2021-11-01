@@ -32,9 +32,12 @@
         
         <div class="shadow p-3 mb-5 bg-body rounded">
             <p class="lead">Order {{ forloop.counter }}</p>
+            {% for x in i|slice:"-1:" %}
+                <p class="lead">Order id: {{ x }}</p>
+            {% endfor %}
             <p>Items</p>
             <hr>
-            {% for x in i|slice:"0:-1" %}
+            {% for x in i|slice:"0:-2" %}
                 <p>Name: {{x.name}}</p>
                 <p>Price: {{ x.price }}</p>
                 <p>Quantity x {{ x.qty }}</p>
@@ -48,6 +51,10 @@
 
 
 {% block js %}
-
+<script>
+    if ("{{ scroll }}" == 'True'){
+        window.scrollTo(0, document.body.scrollHeight)
+    }
+</script>
 
 {% endblock %}

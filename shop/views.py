@@ -78,10 +78,8 @@ def cart(request, id=None):
             listItems = {id: {"price": product[0].price, 'qty': 1, 'name': product[0].product_name}, 'date': datetime.datetime.today().strftime('%d %b %m %Y')}
             order = models.Order(array=listItems, price=product[0].price, name=request.user.username, state=state, city=city, address=address, zip=zip_, e_mail=request.user.email)
             order.save()
-            return HttpResponse(f'''Thank you for purchasing at "My Awesome Cart". Your order id is: {order.order_id}
-            <form action='/shop' method='GET'>
-                <button>Go Back</button>
-            </form>''')
+            return redirect('/shop/my-items?scroll=True')
+
         elif (type(items) == dict and zip_ != '' and items != '' and terms != '' and state != '' and city != '' and address != ''):
             price = 0
             listItems = {}
@@ -92,10 +90,7 @@ def cart(request, id=None):
             listItems['date'] = datetime.datetime.today().strftime('%d %b %m %Y')
             order = models.Order(array=listItems, price=price, name=request.user.username, state=state, city=city, address=address, zip=zip_, e_mail=request.user.email)
             order.save()
-            return HttpResponse(f'''Thank you for purchasing at "My Awesome Cart". Your order id is: {order.order_id}
-            <form action='/shop' method='GET'>
-                <button>Go Back</button>
-            </form>''')
+            return redirect('/shop/my-items?scroll=True')
         else:
             return HttpResponse("An error Occurred while processing your request")
     if (request.method == 'GET' and request.GET.get('checkout', 'False') != 'False'):
@@ -167,7 +162,9 @@ def log_out(request):
 def my_account(request):
     if (request.user.is_authenticated):
         all_items = models.Order.objects.filter(e_mail=request.user.email)
+        print(User.objects.get(username=request.user.username))
         remaining_details = models.OtherUserDetails.objects.filter(email=request.user.email)
+        print(remaining_details)
         total_price = 0
         for i in all_items:
             total_price += i.price
@@ -176,8 +173,56 @@ def my_account(request):
 
 def my_items(request):
     if (request.user.is_authenticated):
+        scroll = request.GET.get('scroll')
+        print(scroll)
+        if scroll != None:
+            scroll = True
+        else:
+            scroll = False
         orders_by_user = models.Order.objects.filter(e_mail=request.user.email)
-        orders_by_user = [[i.array[x] for x in i.array] for i in orders_by_user]
-        print(orders_by_user)
-        return render(request, 'shops/my_items.html', {"orders": orders_by_user, "length_orders": len(orders_by_user) })
+        orders_by_user_json = [[i.array[x] for x in i.array] for i in orders_by_user]
+        for i in range(len(orders_by_user)):
+            orders_by_user_json[i].append(orders_by_user[i].order_id)
+        return render(request, 'shops/my_items.html', {"orders": orders_by_user_json, "length_orders": len(orders_by_user), "scroll": scroll})
     return HttpResponse('404 Page not found error')
+
+
+def edit_profile(request):
+    if (request.user.is_authenticated):
+        if (request.method == 'POST'):
+            passFirst = request.POST.get('passFirst', None)
+            if request.user.check_password(passFirst):
+                return render(request, 'shops/edit-profile.html', {'password_first': False})
+            else:
+                username = request.POST.get('username')
+                password = request.POST.get('password')
+                mobile_number = request.POST.get('mobile')
+                e_mail = request.POST.get('e-mail')
+                if (username != '' or password != '' or mobile_number != '' or e_mail != ''):
+                    user = User.objects.get(username=request.user.username)
+                    other_user_details = models.OtherUserDetails.objects.get(email=request.user.email)
+                    all_orders = models.Order.objects.filter(e_mail=request.user.email)
+
+                    user.email=e_mail if e_mail != '' else request.user.email
+                    user.username=username if username != '' else request.user.username
+                    if password != '':
+                        user.set_password(password)
+                    user.save()
+                    login(request, user)
+                    other_user_details.mobile=mobile_number if mobile_number != '' else other_user_details.mobile
+                    other_user_details.email=e_mail if e_mail != '' else request.user.email
+
+                    other_user_details.save()
+
+                    for i in all_orders:
+                        i.name = request.user.username
+                        i.e_mail = request.user.email
+                        i.save()
+    
+                    return redirect('/shop/my-account')
+                else:
+                    return render(request, 'shops/edit-profile.html', {"password_first": True, 'invalid': True})
+            
+        return render(request, 'shops/edit-profile.html', {"password_first": True})
+    else:
+        return HttpResponse('404 page not found')
