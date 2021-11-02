@@ -193,6 +193,8 @@ def edit_profile(request):
             passFirst = request.POST.get('passFirst', None)
             if request.user.check_password(passFirst):
                 return render(request, 'shops/edit-profile.html', {'password_first': False})
+            elif (request.user.check_password(passFirst) is False and passFirst is not None):
+                return render(request, 'shops/edit-profile.html', {'password_first': True, "invalid": True})
             else:
                 username = request.POST.get('username')
                 password = request.POST.get('password')
