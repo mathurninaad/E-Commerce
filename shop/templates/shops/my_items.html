@@ -3,6 +3,9 @@
 {% block css %}
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
+    :root{
+        --white: #fff;
+    }
     body{
         font-family: 'IBM Plex Mono', monospace;
     }
@@ -19,6 +22,33 @@
         border-top: 5px dotted black;
         background-color: inherit;
     }
+    .flex-display{
+        display: flex;
+        justify-content:space-between;
+    }
+    .button{
+        text-decoration: none;
+        font-weight: 500;
+        text-transform: uppercase;
+        color: var(--white);
+        background: rgb(255, 92, 95);
+        padding: 10px;
+        font-size: 13px;
+    }
+    .button:hover{
+        color: var(--white);
+    }
+    .show-item, .details{
+        width: 50%;
+    }
+    .show-item{
+        display: flex;
+        justify-content: right;
+        align-items: flex-start;
+    }
+    .provide-margin{
+        margin: 20px;
+    }
 </style>
 {% endblock %}
 
@@ -30,19 +60,29 @@
         <hr>
         {% for i in orders %}
         
-        <div class="shadow p-3 mb-5 bg-body rounded">
-            <p class="lead">Order {{ forloop.counter }}</p>
-            {% for x in i|slice:"-1:" %}
-                <p class="lead">Order id: {{ x }}</p>
-            {% endfor %}
-            <p>Items</p>
-            <hr>
-            {% for x in i|slice:"0:-2" %}
-                <p>Name: {{x.name}}</p>
-                <p>Price: {{ x.price }}</p>
-                <p>Quantity x {{ x.qty }}</p>
+        <div class="shadow p-3 mb-5 bg-body rounded d-flex flex-column">
+            <div class='provide-margin'>
+                <p class="lead">Order {{ forloop.counter }}</p>
+                {% for x in i|slice:"-1:" %}
+                    <p class="lead">Order id: {{ x }}</p>
+                {% endfor %}
+                <p>Items</p>
                 <hr>
-            {% endfor %}
+                {% for x in i|slice:"0:-2" %}
+                    <div class="flex-display">
+                        <div class="details">
+                            <p>Name: {{x.name}}</p>
+                            <p>Price: {{ x.price }}</p>
+                            <p>Quantity x {{ x.qty }}</p>
+                        </div>
+    
+                        <div class="show-item">
+                            <a href="/shop/products/1" class="button">View item</a>
+                        </div>
+                    </div>
+                    <hr>
+                {% endfor %}
+            </div>
         </div>
         {% endfor %}
     </div>
