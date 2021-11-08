@@ -5,6 +5,7 @@
 <style>
     :root{
         --white: #fff;
+        --button-color: rgb(255, 92, 95);
     }
     body{
         font-family: 'IBM Plex Mono', monospace;
@@ -31,12 +32,16 @@
         font-weight: 500;
         text-transform: uppercase;
         color: var(--white);
-        background: rgb(255, 92, 95);
+        background: var(--button-color);
         padding: 10px;
         font-size: 13px;
     }
     .button:hover{
-        color: var(--white);
+        color: var(--button-color);
+        background-color: white;
+        border: 3px solid var(--button-color);
+        padding: 7px;
+        border-radius: 2px;
     }
     .show-item, .details{
         width: 50%;
@@ -68,16 +73,16 @@
                 {% endfor %}
                 <p>Items</p>
                 <hr>
-                {% for x in i|slice:"0:-2" %}
+                {% for x in i|slice:"0:-1" %}
                     <div class="flex-display">
                         <div class="details">
                             <p>Name: {{x.name}}</p>
                             <p>Price: {{ x.price }}</p>
-                            <p>Quantity x {{ x.qty }}</p>
+                            <p>Qty x {{ x.qty }}</p>
                         </div>
     
                         <div class="show-item">
-                            <a href="/shop/products/1" class="button">View item</a>
+                            <a href="/shop/products/{{ x.id }}" class="button">View item</a>
                         </div>
                     </div>
                     <hr>

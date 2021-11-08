@@ -180,10 +180,15 @@ def my_items(request):
         else:
             scroll = False
         orders_by_user = models.Order.objects.filter(e_mail=request.user.email)
-        orders_by_user_json = [[i.array[x] for x in i.array] for i in orders_by_user]
-        for i in range(len(orders_by_user)):
-            orders_by_user_json[i].append(orders_by_user[i].order_id)
-        return render(request, 'shops/my_items.html', {"orders": orders_by_user_json, "length_orders": len(orders_by_user), "scroll": scroll})
+        orders_by_user_json_copy = []
+        for i in orders_by_user:
+            orders_by_user_json_copy.append([])
+            for x in i.array:
+                if (type(i.array[x]) != str):
+                    orders_by_user_json_copy[-1].append({'id': x})
+                    orders_by_user_json_copy[-1][-1].update(i.array[x])
+            orders_by_user_json_copy[-1].append(i.order_id)
+        return render(request, 'shops/my_items.html', {"orders": orders_by_user_json_copy, "length_orders": len(orders_by_user), "scroll": scroll})
     return HttpResponse('404 Page not found error')
 
 
